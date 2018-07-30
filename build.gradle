@@ -5,7 +5,7 @@ apply plugin: 'idea'
 
 group = 'se.zensum'
 version = '1.0-SNAPSHOT'
-description = 'Ktor feature that when installed sends error message to a Sentry project'
+description = 'Franz interceptor for catching throwables and sending them Sentry.'
 
 defaultTasks 'build'
 
