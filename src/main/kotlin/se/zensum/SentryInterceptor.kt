@@ -26,16 +26,21 @@ class SentryInterceptor(
 ): WorkerInterceptor( onIntercept = onIntercept){
 
     init{
-        check(dsn != null) { "Sentry DSN must be set for sentry to work"}
+        log.info { "Setting up Sentry Interceptor" }
+        try {
+            check(dsn != null) { "Sentry DSN must be set for sentry to work" }
 
-        Sentry.init(dsn)
-        Sentry.getStoredClient().apply {
-            val user: String? = System.getProperty("user.name")
-            this.serverName = user?.let { "$it@" } + hostname()
+            Sentry.init(dsn)
+            Sentry.getStoredClient().apply {
+                val user: String? = System.getProperty("user.name")
+                this.serverName = user?.let { "$it@" } + hostname()
 
-            appEnv?.let {
-                this.environment = appEnv
+                appEnv?.let {
+                    this.environment = appEnv
+                }
             }
+        }catch (e: Throwable){
+            log.info { "Failed to set up Sentry Interceptor: ${e.message}" }
         }
     }
 }
