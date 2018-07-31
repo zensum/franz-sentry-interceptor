@@ -1,2 +1,1 @@
-# franz-sentry-feature
- 
+# franz-sentry-interceptor
