@@ -17,18 +17,15 @@ class SentryInterceptor(
     dsn: String? = getEnv("SENTRY_DSN", null),
     appEnv: String? = getEnv("APP_ENV", ""),
     onIntercept: suspend (interceptor: WorkerInterceptor, default: JobStatus) -> JobStatus = {interceptor, default ->
-        log.info { "onIntercept invoked" }
         try{
             interceptor.executeNext(default)
         }catch (e: JobStateException){
-            log.info { "Sentry interception: ${e.message}" }
             Sentry.capture(EventBuilder()
                 .withMessage("Exception caught")
                 .withLevel(Event.Level.ERROR)
                 .withSentryInterface(ExceptionInterface(e)))
             throw e
         } catch (e: Throwable){
-            log.info { "Sentry interception: ${e.message}" }
             Sentry.capture(e)
             throw e
         }finally {

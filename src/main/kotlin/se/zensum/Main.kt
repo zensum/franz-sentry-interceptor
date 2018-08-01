@@ -25,6 +25,6 @@ suspend fun createWorker() =
             appEnv = "sandbox"
         )).handlePiped {
         it
-            .map { throw Exception("dummy") }
+            .map(msg = "Mapping to X") { throw Exception("dummy") }
             .end()
     }
