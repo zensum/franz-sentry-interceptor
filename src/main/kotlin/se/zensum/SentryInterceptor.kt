@@ -13,6 +13,7 @@ class SentryInterceptor(
     dsn: String? = getEnv("SENTRY_DSN", null),
     appEnv: String? = getEnv("APP_ENV", ""),
     onIntercept: suspend (interceptor: WorkerInterceptor, default: JobStatus) -> JobStatus = {interceptor, default ->
+        log.info { "onIntercept invoked" }
         try{
             interceptor.executeNext(default)
         }catch (e: Throwable){
