@@ -1,8 +1,12 @@
 package se.zensum.franzSentry
 
+import franz.JobStateException
 import franz.JobStatus
 import franz.WorkerInterceptor
 import io.sentry.Sentry
+import io.sentry.event.Event
+import io.sentry.event.EventBuilder
+import io.sentry.event.interfaces.ExceptionInterface
 import mu.KotlinLogging
 
 fun getEnv(e : String, default: String? = null) : String = System.getenv()[e] ?: default ?: throw RuntimeException("Missing environment variable $e and no default value is given.")
@@ -16,8 +20,15 @@ class SentryInterceptor(
         log.info { "onIntercept invoked" }
         try{
             interceptor.executeNext(default)
-        }catch (e: Throwable){
-            log.info { e.message }
+        }catch (e: JobStateException){
+            log.info { "Sentry interception: ${e.message}" }
+            Sentry.capture(EventBuilder()
+                .withMessage("Exception caught")
+                .withLevel(Event.Level.ERROR)
+                .withSentryInterface(ExceptionInterface(e)))
+            throw e
+        } catch (e: Throwable){
+            log.info { "Sentry interception: ${e.message}" }
             Sentry.capture(e)
             throw e
         }finally {
