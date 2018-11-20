@@ -10,40 +10,33 @@ description = 'Franz interceptor for catching throwables and sending them Sentry
 defaultTasks 'build'
 
 buildscript {
-    ext.kotlin_version = '1.2.31'
+    ext.kotlin_version = '1.3.10'
     ext.jvm_version = '1.8'
-    ext.junit_platform_version = '1.1.0'
-    ext.ktor_version = '0.9.1'
     repositories {
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.junit.platform:junit-platform-gradle-plugin:$junit_platform_version"
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
     }
 }
 
-apply plugin: "org.junit.platform.gradle.plugin"
-
-junitPlatform {
-    platformVersion = junit_platform_version
+test {
+    useJUnitPlatform()
 }
 
 repositories {
     jcenter()
-    maven { url "https://dl.bintray.com/kotlin/ktor" }
     maven { url "https://jitpack.io" }
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    testCompile 'org.junit.jupiter:junit-jupiter-api:5.1.0'
-    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 
-    compile 'com.github.zensum:franz:ad1d6b3ff8'
-    compile group: 'io.sentry', name: 'sentry', version: '1.7.2'
+    compile 'com.github.zensum:franz:ad335f741'
+    compile group: 'io.sentry', name: 'sentry', version: '1.7.4'
 }
 
 compileKotlin {
@@ -60,12 +53,6 @@ compileJava {
     options.encoding = 'UTF-8'
 }
 
-kotlin {
-    experimental {
-        coroutines 'enable'
-    }
-}
-
 // Important: All classes containing test cases must match the
 // the regex pattern "^.*Tests?$" to be picked up by the junit-gradle plugin.
 sourceSets {
@@ -78,5 +65,5 @@ sourceSets {
 
 task wrapper(type: Wrapper) {
     description = 'Generates gradlew[.bat] scripts for faster execution'
-    gradleVersion = '4.8'
+    gradleVersion = '4.10.2'
 }

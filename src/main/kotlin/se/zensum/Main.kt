@@ -3,7 +3,7 @@ package se.zensum
 import franz.WorkerBuilder
 import franz.engine.mock.MockConsumerActor
 import franz.engine.mock.MockMessage
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import se.zensum.franzSentry.SentryInterceptor
 
 fun main(args: Array<String>){
