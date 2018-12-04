@@ -35,7 +35,7 @@ dependencies {
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 
-    compile 'com.github.zensum:franz:bed823f89a'
+    compile 'com.github.zensum:franz:21d533b832'
     compile group: 'io.sentry', name: 'sentry', version: '1.7.4'
 }
 
