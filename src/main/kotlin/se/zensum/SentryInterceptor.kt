@@ -1,5 +1,6 @@
 package se.zensum.franzSentry
 
+import franz.JobState
 import franz.JobStateException
 import franz.JobStatus
 import franz.WorkerInterceptor
@@ -16,14 +17,15 @@ private val log = KotlinLogging.logger("sentry")
 class SentryInterceptor(
     dsn: String? = getEnv("SENTRY_DSN", null),
     appEnv: String? = getEnv("APP_ENV", ""),
-    onIntercept: suspend (interceptor: WorkerInterceptor, default: JobStatus) -> JobStatus = {interceptor, default ->
-        try{
-            interceptor.executeNext(default)
+    onIntercept: suspend (interceptor: WorkerInterceptor, default: JobStatus, jobstate: JobState<Any>) -> JobStatus = { interceptor, default, jobState -> try{
+            interceptor.executeNext(default, jobState)
         }catch (e: JobStateException){
             Sentry.capture(EventBuilder()
                 .withMessage("Exception caught")
                 .withLevel(Event.Level.ERROR)
-                .withSentryInterface(ExceptionInterface(e)))
+                .withSentryInterface(ExceptionInterface(e))
+                .withExtra("context", interceptor)
+            )
             throw e
         } catch (e: Throwable){
             Sentry.capture(e)
