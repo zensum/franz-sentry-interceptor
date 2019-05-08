@@ -17,8 +17,8 @@ private val log = KotlinLogging.logger("sentry")
 class SentryInterceptor(
     dsn: String? = getEnv("SENTRY_DSN", null),
     appEnv: String? = getEnv("APP_ENV", ""),
-    onIntercept: suspend (interceptor: WorkerInterceptor, default: JobStatus, jobstate: JobState<Any>) -> JobStatus = { interceptor, default, jobState -> try{
-            interceptor.executeNext(default, jobState)
+    onIntercept: suspend (interceptor: WorkerInterceptor, default: JobStatus) -> JobStatus = { interceptor, default -> try{
+            interceptor.executeNext(default)
         }catch (e: JobStateException){
             Sentry.capture(EventBuilder()
                 .withMessage("Exception caught")
