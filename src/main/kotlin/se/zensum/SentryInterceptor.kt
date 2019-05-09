@@ -24,11 +24,8 @@ class SentryInterceptor(
             val event = EventBuilder()
                 .withMessage("Exception caught")
                 .withLevel(Event.Level.ERROR)
-                .withSentryInterface(ExceptionInterface(e)
-            )
-            interceptor.jobState?.context?.forEach {
-                event.withExtra(it.workerStepName, it.input?.toJson())
-            }
+                .withSentryInterface(ExceptionInterface(e))
+                .withExtra("content", interceptor.jobState?.context)
 
             Sentry.capture(event)
             throw e
