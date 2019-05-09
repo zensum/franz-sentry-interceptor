@@ -5,11 +5,14 @@ import franz.JobStateException
 import franz.JobStatus
 import franz.WorkerInterceptor
 import io.sentry.Sentry
+import io.sentry.event.Breadcrumb
+import io.sentry.event.BreadcrumbBuilder
 import io.sentry.event.Event
 import io.sentry.event.EventBuilder
 import io.sentry.event.interfaces.ExceptionInterface
 import mu.KotlinLogging
 import se.zensum.toJson
+import java.util.*
 
 fun getEnv(e : String, default: String? = null) : String = System.getenv()[e] ?: default ?: throw RuntimeException("Missing environment variable $e and no default value is given.")
 
@@ -26,6 +29,9 @@ class SentryInterceptor(
                 .withLevel(Event.Level.ERROR)
                 .withSentryInterface(ExceptionInterface(e))
                 .withExtra("content", interceptor.jobState?.context)
+                .withBreadcrumbs(interceptor.jobState?.breadcrumbs?.map {
+                    BreadcrumbBuilder().setMessage(it).build()
+                })
 
             Sentry.capture(event)
             throw e
