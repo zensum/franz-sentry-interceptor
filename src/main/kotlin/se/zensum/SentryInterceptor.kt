@@ -21,12 +21,16 @@ class SentryInterceptor(
     onIntercept: suspend (interceptor: WorkerInterceptor, default: JobStatus) -> JobStatus = { interceptor, default -> try{
             interceptor.executeNext(default)
         }catch (e: JobStateException){
-            Sentry.capture(EventBuilder()
+            val event = EventBuilder()
                 .withMessage("Exception caught")
                 .withLevel(Event.Level.ERROR)
-                .withSentryInterface(ExceptionInterface(e))
-                .withExtra("context", interceptor.jobState?.context.toJson() )
+                .withSentryInterface(ExceptionInterface(e)
             )
+            interceptor.jobState?.context?.forEach {
+                event.withExtra(it.workerStepName, it.input?.toJson())
+            }
+
+            Sentry.capture(event)
             throw e
         } catch (e: Throwable){
             Sentry.capture(e)
