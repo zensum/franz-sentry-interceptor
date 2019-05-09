@@ -9,6 +9,7 @@ import io.sentry.event.Event
 import io.sentry.event.EventBuilder
 import io.sentry.event.interfaces.ExceptionInterface
 import mu.KotlinLogging
+import se.zensum.toJson
 
 fun getEnv(e : String, default: String? = null) : String = System.getenv()[e] ?: default ?: throw RuntimeException("Missing environment variable $e and no default value is given.")
 
@@ -24,7 +25,7 @@ class SentryInterceptor(
                 .withMessage("Exception caught")
                 .withLevel(Event.Level.ERROR)
                 .withSentryInterface(ExceptionInterface(e))
-                .withExtra("context", interceptor)
+                .withExtra("context", interceptor.jobState?.context.toJson() )
             )
             throw e
         } catch (e: Throwable){
@@ -53,5 +54,9 @@ class SentryInterceptor(
         }catch (e: Throwable){
             log.info { "Failed to set up Sentry Interceptor: ${e.message}" }
         }
+    }
+
+    private fun sentryWrapper(interceptor: WorkerInterceptor, default: JobStatus): JobStatus{
+        return JobStatus.Retry
     }
 }
