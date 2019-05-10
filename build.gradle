@@ -35,7 +35,7 @@ dependencies {
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 
-    compile 'com.github.zensum:franz:d0cec03148'
+    compile 'com.github.zensum:franz:12a1d1ae84'
 
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version:'2.9.6'
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version:'2.9.6'
