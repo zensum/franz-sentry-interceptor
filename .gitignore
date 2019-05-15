@@ -27,3 +27,5 @@ build
 
 # Environment variables for Docker
 .env
+
+src/main/resources/logback*.xml
