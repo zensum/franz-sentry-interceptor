@@ -28,7 +28,7 @@ class SentryInterceptor(
                 .withMessage("Exception caught")
                 .withLevel(Event.Level.ERROR)
                 .withSentryInterface(ExceptionInterface(e))
-                .withExtra("content", interceptor.jobState?.context)
+                .withExtra("input", interceptor.jobState?.context?.first()?.input)
                 .withBreadcrumbs(interceptor.jobState?.breadcrumbs?.map {
                     BreadcrumbBuilder().setMessage(it).build()
                 })
