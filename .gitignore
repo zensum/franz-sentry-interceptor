@@ -27,4 +27,6 @@ build
 
 # Environment variables for Docker
 .env
+
 /gradle
+src/main/resources/logback*.xml
