@@ -20,7 +20,7 @@ fun getEnv(e : String, default: String? = null) : String = System.getenv()[e] ?:
 private val log = KotlinLogging.logger("sentry")
 
 private fun getContextContent(value: Any?) = when(value){
-    is KafkaMessage<*,*> -> (value as KafkaMessage<*,*>).value()
+    is KafkaMessage<*,*> -> value.value()
     else -> value
 }
 
