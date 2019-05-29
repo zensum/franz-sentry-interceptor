@@ -4,6 +4,7 @@ import franz.JobState
 import franz.JobStateException
 import franz.JobStatus
 import franz.WorkerInterceptor
+import franz.engine.kafka_one.KafkaMessage
 import io.sentry.Sentry
 import io.sentry.event.Breadcrumb
 import io.sentry.event.BreadcrumbBuilder
@@ -18,6 +19,11 @@ fun getEnv(e : String, default: String? = null) : String = System.getenv()[e] ?:
 
 private val log = KotlinLogging.logger("sentry")
 
+private fun getContextContent(value: Any?) = when(value){
+    is KafkaMessage<*,*> -> (value as KafkaMessage<*,*>).value()
+    else -> value
+}
+
 class SentryInterceptor(
     dsn: String? = getEnv("SENTRY_DSN", null),
     appEnv: String? = getEnv("APP_ENV", ""),
@@ -28,7 +34,7 @@ class SentryInterceptor(
                 .withMessage("Exception caught")
                 .withLevel(Event.Level.ERROR)
                 .withSentryInterface(ExceptionInterface(e))
-                .withExtra("input", interceptor.jobState?.context?.first()?.input)
+                .withExtra("input", getContextContent(interceptor.jobState?.context?.first()?.input))
                 .withBreadcrumbs(interceptor.jobState?.breadcrumbs?.map {
                     BreadcrumbBuilder().setMessage(it).build()
                 })
